@@ -2,6 +2,7 @@ package com.example.openbankmobiletest.master.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -81,7 +82,12 @@ class MasterActivity : AppCompatActivity(), HasAndroidInjector,
 
         val characterObserver = Observer<CharacterDataWrapper> { newWrapper ->
             binding.swipeRefreshLayout.isRefreshing = false
-            adapter.addAll(newWrapper.data.results)
+            if (newWrapper.code == 200 && newWrapper.data != null) {
+                adapter.addAll(newWrapper.data.results)
+            } else {
+                Toast.makeText(this@MasterActivity, newWrapper.status, Toast.LENGTH_LONG).show()
+            }
+
         }
 
         viewModel.characterDataWrapper.observe(this, characterObserver)

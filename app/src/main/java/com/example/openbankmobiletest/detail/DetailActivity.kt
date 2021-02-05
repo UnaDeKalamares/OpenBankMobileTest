@@ -1,6 +1,7 @@
 package com.example.openbankmobiletest.detail
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
@@ -57,9 +58,16 @@ class DetailActivity : AppCompatActivity(), HasAndroidInjector {
     private fun initObserver() {
 
         val characterObserver = Observer<CharacterDataWrapper> { newWrapper ->
-            val character = newWrapper.data.results[0]
-            val path = ImageUtils.getImageURL(character.thumbnail, ImageUtils.IMAGE_SIZES.PORTRAIT_UNCANNY)
-            Glide.with(this@DetailActivity).load(path).into(binding.image)
+            if (newWrapper.code == 200 && newWrapper.data != null) {
+                val character = newWrapper.data.results[0]
+                val path = ImageUtils.getImageURL(
+                    character.thumbnail,
+                    ImageUtils.IMAGE_SIZES.PORTRAIT_UNCANNY
+                )
+                Glide.with(this@DetailActivity).load(path).into(binding.image)
+            } else {
+                Toast.makeText(this@DetailActivity, newWrapper.status, Toast.LENGTH_LONG).show()
+            }
         }
 
         viewModel.characterDataWrapper.observe(this, characterObserver)
