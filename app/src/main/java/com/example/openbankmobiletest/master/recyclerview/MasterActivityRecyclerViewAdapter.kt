@@ -4,13 +4,18 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.openbankmobiletest.model.Character
 
-class MasterActivityRecyclerViewAdapter : RecyclerView.Adapter<MasterItemViewHolder>() {
+class MasterActivityRecyclerViewAdapter(private val listener: MasterItemViewHolder.MasterItemViewHolderListener) : RecyclerView.Adapter<MasterItemViewHolder>() {
 
-    private val characters: List<Character> = ArrayList()
+    var characters: ArrayList<Character> = ArrayList()
+
+    fun addAll(newCharacters: List<Character>) {
+        characters.addAll(newCharacters)
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MasterItemViewHolder {
 
-        return MasterItemViewHolder(parent)
+        return MasterItemViewHolder(parent, listener)
 
     }
 
@@ -25,4 +30,5 @@ class MasterActivityRecyclerViewAdapter : RecyclerView.Adapter<MasterItemViewHol
         return characters.size
 
     }
+
 }

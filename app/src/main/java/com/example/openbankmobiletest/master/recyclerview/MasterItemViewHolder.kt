@@ -8,17 +8,24 @@ import com.example.openbankmobiletest.R
 import com.example.openbankmobiletest.databinding.ItemMasterBinding
 import com.example.openbankmobiletest.model.Character
 
-class MasterItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class MasterItemViewHolder(itemView: View, private val listener: MasterItemViewHolderListener) : RecyclerView.ViewHolder(itemView) {
 
     private var binding: ItemMasterBinding = ItemMasterBinding.bind(itemView)
 
-    constructor(parent: ViewGroup) : this(
-        LayoutInflater.from(parent.context).inflate(R.layout.item_master, parent, false)
+    constructor(parent: ViewGroup, listener: MasterItemViewHolderListener) : this(
+        LayoutInflater.from(parent.context).inflate(R.layout.item_master, parent, false), listener
     )
 
     fun bind(character: Character) {
 
         binding.name.text = character.name
+        binding.container.setOnClickListener { listener.onCharacterClick(character.id) }
+
+    }
+
+    interface MasterItemViewHolderListener {
+
+        fun onCharacterClick(characterId: Int)
 
     }
 
