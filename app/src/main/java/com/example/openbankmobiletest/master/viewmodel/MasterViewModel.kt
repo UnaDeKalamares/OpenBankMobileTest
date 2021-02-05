@@ -14,11 +14,11 @@ class MasterViewModel @Inject constructor(private val repository: MarvelReposito
         MutableLiveData()
     }
 
-    fun getCharacters() {
+    fun getCharacters(offset: Int = 0) {
 
         viewModelScope.launch {
 
-            val result = repository.getCharacters(0)
+            val result = repository.getCharacters(offset)
             characterDataWrapper.postValue(result)
 
         }

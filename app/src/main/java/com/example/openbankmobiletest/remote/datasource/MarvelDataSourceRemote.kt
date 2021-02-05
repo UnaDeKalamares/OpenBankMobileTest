@@ -24,7 +24,7 @@ class MarvelDataSourceRemote @Inject constructor(retrofit: Retrofit) {
 
     suspend fun getCharacters(offset: Int): Response<CharacterDataWrapper> {
         val timeStamp = Calendar.getInstance().timeInMillis
-        return api.getCharacters(BuildConfig.MARVEL_API_KEY, timeStamp, calculateHash(timeStamp))
+        return api.getCharacters(offset, BuildConfig.MARVEL_API_KEY, timeStamp, calculateHash(timeStamp))
     }
 
     suspend fun getCharacterById(characterId: Int): Response<CharacterDataWrapper> {

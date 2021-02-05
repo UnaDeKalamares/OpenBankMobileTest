@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.openbankmobiletest.databinding.ActivityMasterBinding
 import com.example.openbankmobiletest.detail.DetailActivity
 import com.example.openbankmobiletest.master.viewmodel.MasterViewModel
@@ -40,19 +41,46 @@ class MasterActivity : AppCompatActivity(), HasAndroidInjector,
         binding = ActivityMasterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        adapter = MasterActivityRecyclerViewAdapter(this)
-        binding.recyclerView.adapter = adapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(this@MasterActivity)
+        initAdapter()
 
         initObserver()
 
+        binding.swipeRefreshLayout.isRefreshing = true
         viewModel.getCharacters()
+
+    }
+
+    private fun initAdapter() {
+
+        adapter = MasterActivityRecyclerViewAdapter(this)
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(this@MasterActivity)
+        binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+
+            val layoutManager = binding.recyclerView.layoutManager as LinearLayoutManager
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val totalItems = viewModel.characterDataWrapper.value?.data?.results?.size ?: 0
+                val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+                if (adapter.characters.size < totalItems && adapter.characters.size - lastVisibleItemPosition == 5 && binding.swipeRefreshLayout.isRefreshing.not()) {
+
+                    binding.swipeRefreshLayout.isRefreshing = true
+                    viewModel.getCharacters(adapter.characters.size)
+
+                }
+
+            }
+
+        })
 
     }
 
     private fun initObserver() {
 
         val characterObserver = Observer<CharacterDataWrapper> { newWrapper ->
+            binding.swipeRefreshLayout.isRefreshing = false
             adapter.addAll(newWrapper.data.results)
         }
 
